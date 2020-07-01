@@ -67,11 +67,27 @@ const directorResolver = {
 	}
 }
 
+const directorsResolver = {
+	type: GraphQLList(directorType),
+	resolve() {
+		return directors
+	}
+}
+
+const moviesResolver = {
+	type: GraphQLList(movieType),
+	resolve() {
+		return movies
+	}
+}
+
 const RootQuery = new GraphQLObjectType({
 	name: "rootquery",
 	fields: {
 		movie: movieResolver,
-		director: directorResolver
+		movies: moviesResolver,
+		director: directorResolver,
+		directors: directorsResolver
 	}
 })
 
