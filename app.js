@@ -2,16 +2,35 @@ const express = require("express");
 const graphqlHttp = require("express-graphql");
 const schema = require("./schema");
 
-const app = express();
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb://localhost:27017";
 
-app.use(
-  "/graphql",
-  graphqlHttp({
-    schema,
-    graphiql: true,
-  })
-);
+const client = new MongoClient(url)
 
-app.listen(8000, () => {
-  console.log("listening on port:8000");
-});
+client.connect(function(err, db) {
+	if (err) {
+		throw err;
+	}
+	console.log("Connected to Database");
+
+	const app = express();
+
+	dbClient = client.db('Movies')
+
+	app.use(
+		"/graphql",
+		(request, response) => {
+			return graphqlHttp({
+				schema,
+				graphiql: true,
+				context: {
+					dbClient,
+				}
+			})(request, response)
+		});
+
+	app.listen(8000, () => {
+		console.log("listening on port:8000");
+	});
+})
+
